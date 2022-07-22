@@ -23,8 +23,6 @@
     <script type="text/javascript">
         function map_init(map, options) {
             // get point lat and lon
-            var vect = JSON.stringify({{vect|safe}})
-            console.log(vect)
             
             var url_to_geotiff_file = "/static/media/geo.tif";
             fetch(url_to_geotiff_file)
@@ -43,7 +41,9 @@
                 });
             }); 
          
-            if(vect.showVector == 'True') {
+            const showVector  = {{ vect.showVector | safe }};
+            console.log(showVector)
+            if(showVector) {
                 var pointx, pointy;
                 for(point of {{ vect.geom | safe }}) {
                     marker = L.marker([point.lat, point.lon]).addTo(map); 
@@ -57,7 +57,4 @@
         }
     </script>
     {% endautoescape %}
-
-
-
 <body>

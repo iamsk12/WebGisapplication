@@ -39,10 +39,13 @@ class BoundariesGeoJSON(View):
             
         return HttpResponse(geojson)
 
-def indview(request):
+def mapview(request):
+    
     qs=list(PointVect.objects.values('gid','name','geom'))
+    
     geojson = []
-    for geom in qs[:10]:
+    
+    for geom in qs[:1]:
         geometry = geom['geom']
         x = geometry[0]
         y = geometry[1]
@@ -51,12 +54,15 @@ def indview(request):
             'lon':x
         }
         geojson.append(latlon)
+        
     print(geojson)
+    showVector = 'false'
+    if(request.user.is_staff):
+        showVector = 'true'
             
     print(request.user.is_staff)
-    mapData = {'showVector': str(request.user.is_staff),'geom':json.dumps(geojson)}
+    mapData = {'showVector': showVector ,'geom':json.dumps(geojson)}
     return render(request,"index.html",{'vect': mapData})
-
 
 def user_login(request):
     if request.method == "POST":
@@ -71,6 +77,7 @@ def user_login(request):
         else:
             alert = True
             return render(request, "login.html", {'alert':alert})
+        
     return render(request, "login.html")
 
 #Register admin
