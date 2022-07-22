@@ -1,0 +1,19 @@
+{% load static %}
+<html>
+<head>
+  <meta charset="utf-8" />
+  <script src="https://openlayers.org/en/v4.6.5/build/ol.js"></script>
+  <link rel="stylesheet" href="https://openlayers.org/en/v4.6.5/css/ol.css" type="text/css">
+  <!-- stylesheet staticfiles project -->
+  <link rel="stylesheet" href="{% static 'css/ol-layerswitcher.css' %}" />
+  <!-- stylesheet staticfiles application -->
+  <link rel="stylesheet" href="{% static 'network_topology/css/layerswitcher.css' %}" />
+</head>
+<body>
+    <div id="map"></div>
+    <!-- script staticfiles project -->
+       <script type="text/javascript" src="{% static 'js/ol-layerswitcher.js' %}"></script>
+       <!-- script staticfiles application  -->
+       <script type="text/javascript" src="{% static 'network_topology/js/layerswitcher.js' %}"></script>
+</body>
+</html>
