@@ -1,6 +1,5 @@
 {% load static %}
 {% load leaflet_tags %}
-
 <head>
     {% leaflet_css %}
     {% leaflet_js %}
@@ -8,7 +7,7 @@
 <body height="100%">
     <script src="https://unpkg.com/georaster"></script>
     <script src="https://unpkg.com/georaster-layer-for-leaflet"></script>
-    <div>
+    <div height="100%">
         <div><a href="/logout">Logout</a></div>
         <div id="map" height="100%"></div>
         {% leaflet_map "main" callback="map_init" %}
@@ -42,16 +41,27 @@
             }); 
          
             const showVector  = {{ vect.showVector | safe }};
-            console.log(showVector)
             if(showVector) {
-                var pointx, pointy;
-                for(point of {{ vect.geom | safe }}) {
-                    marker = L.marker([point.lat, point.lon]).addTo(map); 
-                    pointx = point.lat;
-                    pointy = point.lon;
-                    marker.bindPopup('lat: ' + point.lat + '<br> lon: ' + point.lon).openPopup();
-                } 
-                map.setView([pointx, pointy], 60);
+                fetch('http://127.0.0.1:8000/BoundariesGeoJSON/', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(response=>{
+                    var pointx, pointy;
+                    for(point of response) {
+                        console.log(point)
+                        marker = L.marker([point.lat, point.lon]).addTo(map); 
+                        pointx = point.lat;
+                        pointy = point.lon;
+                        
+                        marker.bindPopup('lat: ' + point.lat + '<br> lon: ' + point.lon);
+                    } 
+                    {% comment %} map.setView([pointx, pointy], 60); {% endcomment %}
+                })
+
             }
             
         }

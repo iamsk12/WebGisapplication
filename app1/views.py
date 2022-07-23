@@ -1,22 +1,13 @@
 import json
 from django.http import HttpResponse
 from django.shortcuts import render,HttpResponse
-from git import Object
-
 from app1.forms import SignUpForm
-from .models import PointVect, vect
+from .models import PointVect
 from django.views.generic.base import View, TemplateView
 from django.http.response import HttpResponse
-from django.shortcuts import redirect, render,HttpResponseRedirect
+from django.shortcuts import redirect, render
 from django.contrib.auth import authenticate, login, logout
 from .models import *
-from django.core.serializers import serialize
-from .models import vect
-from django.contrib.gis.geos import Point
-
-# Create your views here.
-
-
 class IndexView(TemplateView):
     # a template file name in the templates directory in current application
     template_name = 'ol-index.html'
@@ -27,41 +18,33 @@ class IndexView(TemplateView):
 class BoundariesGeoJSON(View):
     def get(self, request):
         qs=list(PointVect.objects.values('gid','name','geom'))
-        geojson = {}
-        for geom in qs:
-            geometry = geom['geom']
-            
-            geojson = serialize('geojson', PointVect.objects.filter(geom__contains=geometry),
-            geometry_field='geom',
-            fields=('amp_namt',))
-            print(geometry[0])
-            print('/n')
-            
-        return HttpResponse(geojson)
-
-def mapview(request):
     
-    qs=list(PointVect.objects.values('gid','name','geom'))
-    
-    geojson = []
-    
-    for geom in qs[:1]:
-        geometry = geom['geom']
-        x = geometry[0]
-        y = geometry[1]
-        latlon = {
-            'lat':y,
-            'lon':x
-        }
-        geojson.append(latlon)
+        geojson = []
         
-    print(geojson)
+        for geom in qs[:20]:
+            geometry = geom['geom']
+            x = geometry[0]
+            y = geometry[1]
+            latlon = {
+                'lat':y,
+                'lon':x
+            }
+            geojson.append(latlon)
+        res = json.dumps(geojson, cls=DecimalJSONEncoder)
+            
+        return HttpResponse(res)
+
+class DecimalJSONEncoder(json.JSONEncoder):
+    def default(self, o):
+        return super(DecimalJSONEncoder, self).default(o)
+    
+def mapview(request):
     showVector = 'false'
     if(request.user.is_staff):
         showVector = 'true'
             
     print(request.user.is_staff)
-    mapData = {'showVector': showVector ,'geom':json.dumps(geojson)}
+    mapData = {'showVector': showVector }
     return render(request,"index.html",{'vect': mapData})
 
 def user_login(request):
