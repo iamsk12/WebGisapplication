@@ -21,7 +21,7 @@ class BoundariesGeoJSON(View):
     
         geojson = []
         
-        for geom in qs[:20]:
+        for geom in qs:
             geometry = geom['geom']
             x = geometry[0]
             y = geometry[1]

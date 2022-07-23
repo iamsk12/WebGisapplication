@@ -50,16 +50,10 @@
                 })
                 .then(response => response.json())
                 .then(response=>{
-                    var pointx, pointy;
                     for(point of response) {
-                        console.log(point)
                         marker = L.marker([point.lat, point.lon]).addTo(map); 
-                        pointx = point.lat;
-                        pointy = point.lon;
-                        
                         marker.bindPopup('lat: ' + point.lat + '<br> lon: ' + point.lon);
                     } 
-                    {% comment %} map.setView([pointx, pointy], 60); {% endcomment %}
                 })
 
             }
